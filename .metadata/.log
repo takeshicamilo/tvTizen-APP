@@ -1,0 +1,22 @@
+!SESSION 2022-08-24 12:23:20.143 -----------------------------------------------
+eclipse.buildId=4.6
+java.version=1.8.0_242
+java.vendor=Amazon.com Inc.
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=en
+Framework arguments:  -Dorg.eclipse.swt.browser.DefaultType=MOZILLA
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -data /Users/camiloramirezescobar/Desktop/tvAPP -Dorg.eclipse.swt.browser.DefaultType=MOZILLA
+
+!ENTRY org.eclipse.ui 2 0 2022-08-24 12:23:24.689
+!MESSAGE Warnings while parsing the images from the 'org.eclipse.ui.commandImages' extension point.
+!SUBENTRY 1 org.eclipse.ui 2 0 2022-08-24 12:23:24.689
+!MESSAGE Cannot bind to an undefined command: plug-in='org.eclipse.egit.ui', id='org.eclipse.egit.ui.RepositoriesViewRefresh'
+!SUBENTRY 1 org.eclipse.ui 2 0 2022-08-24 12:23:24.689
+!MESSAGE Cannot bind to an undefined command: plug-in='org.eclipse.egit.ui', id='org.eclipse.egit.ui.org.eclipse.egit.ui.AbortRebase'
+!SUBENTRY 1 org.eclipse.ui 2 0 2022-08-24 12:23:24.689
+!MESSAGE Cannot bind to an undefined command: plug-in='org.eclipse.egit.ui', id='org.eclipse.egit.ui.history.RenameBranch'
+
+!ENTRY org.eclipse.core.net 1 0 2022-08-24 12:23:25.068
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+
+!ENTRY org.tizen.common.ui.Startup 1 0 2022-08-24 12:23:37.057
+!MESSAGE SDK Information: Path [/Users/camiloramirezescobar/tizen-studio], Data Path [/Users/camiloramirezescobar/tizen-studio-data], Platform Path [/Users/camiloramirezescobar/tizen-studio/platforms/tizen-6.5/wearable]

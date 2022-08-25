@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>laaaaa</title>
+	    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+		<link href="https://vjs.zencdn.net/7.20.2/video-js.css" rel="stylesheet" />
+		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app">
+				<video ref="videoPlayer" class="video-js" height="500px" width="500px"></video>
+			
+				<div class="center" v-if="loginPage">
+					<img src="https://www.adobe.com/es/express/feature/image/media_16ad2258cac6171d66942b13b8cd4839f0b6be6f3.png?width=750&format=png&optimize=medium" alt="">
+					<div class="contentCode">
+						<div class="code">
+							<div style="margin-bottom: 2px;">{{ device_code }}</div>
+							<button style="margin-bottom: 1px;" class="button" v-on:click="login" v-if="button">Validar</button>
+							
+							<div v-for="error in errors" class="error">{{ error }}</div>
+
+							<div class="loader" v-if="loading"></div>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="box" v-if="!loginPage && !video">
+						<div class="box-header">
+							<p style="font-size: 30px;">
+								Lista de Canales
+							</p>
+						</div>
+						<ul class="list">
+							<li :class="[index == selector ? 'itemSelected' : 'item']" v-for="(tvChannels, index) in channels" :key="index" :id="'lista' + index">
+								<div style="display: flex; align-items: center;" >
+									<img :src="tvChannels.logo" alt="" style="width: 40px; height: 40px;">
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									{{tvChannels.name}}
+								</div>
+							</li>
+						</ul>
+				</div>
+					
+
+		</div>
+	</body>
+	<script src="https://vjs.zencdn.net/7.20.2/video.min.js"></script>
+	<script type="module">
+		new Vue({
+		  el: '#app',
+		  data: {
+		    video: true,
+			device_code: '',
+			loading: false,
+			loginPage: true,
+			tvPage: false,
+			button: true,
+			channels: [],
+			errors: [],
+			selector: 0,
+			
+			player: null,
+			videoOptions: {
+				autoplay: true,
+				controls: true,
+				preload: 'auto',
+				sources: [{
+					src: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
+					type: 'application/x-mpegURL'
+				}]
+			}
+		  },
+		  methods: {
+			displayError(errors) {
+				setTimeout(() => this.loading = false, 1000)
+
+				setTimeout(() => this.errors.push(errors), 1000)
+
+				// this.errors.push(errors);
+				setTimeout(() => this.errors = [], 4000)
+				setTimeout(() => this.button = true, 4000)
+
+				return
+			},
+			login() {
+				this.errors = [];
+            	this.loading = true
+				this.button = false
+				var url = 'https://badala.ataria.co/ISP/IPTV/api.asp?'
+	
+				const params = new URLSearchParams({
+					action: 'login',
+					device_code: this.device_code,
+					mac: 'xd',
+					loading: false
+				}).toString();
+
+				url = url + params
+				axios.post(url).then((result) => {
+					console.log(result.data)
+					if (result.data.session == null) {
+						
+						this.displayError(result.data.message);
+					} else {
+						this.displayError(result.data.message);
+						this.channels = result.data.channels
+						this.loginPage = false
+					}
+				});
+			},
+			keyDownHandler(e) {
+				console.log(e.keyCode)
+				switch(e.keyCode){
+					case 37: //LEFT arrow
+						break;
+					case 38: //UP arrow
+						this.selectorPosition('-')
+						break;
+					case 39: //RIGHT arrow
+						break;
+					case 40: //DOWN arrow
+						this.selectorPosition('+')
+						break;
+					case 13: //OK button
+						this.startVideo()
+						break;
+					case 10009:
+						console.log('bye')
+						tizen.application.getCurrentApplication().exit();
+						break;
+					default:
+						console.log('Key code : ' + e.keyCode);
+						break;
+				}
+			},
+			selectorPosition(value) {
+				var lista = 'lista'+this.selector
+
+				var element = document.getElementById(lista);
+				if (value == '+') {
+					if (this.selector < this.channels.length - 1) {
+						this.selector++;
+						element.scrollIntoView({block: "center", behavior: "auto"})
+					}
+				} else {
+
+					if (this.selector > 0) {
+						this.selector--;
+						element.scrollIntoView({block: "center", behavior: "auto"})
+
+					}
+				}
+			},
+			startVideo() {
+				var url = this.channels[this.selector].url;
+				this.videoOptions.sources[0].src = url;
+				
+			}
+		  },
+		  mounted() {
+			this.player = videojs(this.$refs.videoPlayer, this.videoOptions, () => {
+				this.player.log('onPlayerReady', this);
+			});
+			// window.localStorage.clear();
+			localStorage.setItem("device_code", '229BC193');
+			if (localStorage.getItem("device_code") === null) {
+				this.device_code = 'No tienes codigo de activacion contacta un administrador'
+				//generar codigo
+			} else {
+				var code = window.localStorage.getItem('device_code');
+				this.device_code = code
+				this.login()
+			}
+
+			
+			},
+			created() {
+				var value = tizen.tvinputdevice.getSupportedKeys();
+				console.log(value); 
+				window.addEventListener('keydown', this.keyDownHandler);
+
+			},
+			beforeDestroy() {
+				if (this.player) {
+				this.player.dispose();
+				}
+			}
+ 		})
+
+	</script>
+	<style>
+		#video {
+			width: 99%;
+			height: 99%;
+			z-index: 2;
+			position: absolute;
+		}
+		:root {
+			--main-bg-color: #bcbcbc;
+			--item-hover-bg: #2f2d30;
+			--item-hover-color: rgb(225, 161, 161);
+			--item-bg-color: #fff;
+			--box-header-bg: #403d42;
+			--box-header-color: #fff;
+		}
+		.error {
+			color: red;
+			font-size: larger;
+		}
+		.loader {
+			border: 5px solid #f3f3f3; /* Light grey */
+			border-top: 5px solid red; /* Blue */
+			border-radius: 50%;
+			width: 20px;
+			height: 20px;
+			animation: spin 2s linear infinite;
+		}
+
+		@keyframes spin {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+		}
+		.button {
+			padding: 8px 20px;
+			background-color: cadetblue;
+			font-size: 24px;
+  			text-align: center;
+			cursor: pointer;
+			outline: none;
+			color: #fff;
+			background-color: #04AA6D;
+			border: none;
+			border-radius: 10px;
+			box-shadow: 0 5px #999;
+		}
+		.button:hover {background-color: #3e8e41}
+
+		.button:active {
+		background-color: #3e8e41;
+		box-shadow: 0 5px #666;
+		transform: translateY(4px);
+		}
+
+		.center {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			-webkit-transform: translate(-50%, -50%);
+			transform: translate(-50%, -50%);
+		}
+		.code {
+			display: flex;
+			flex-direction: column;
+			font-size: x-large;
+			font-weight: bold;
+			margin: 0px auto;
+			align-items: center;
+			width: fit-content;
+		}
+		.contentCode {
+			height: fit-content !important;
+		}
+		.boxBackground {
+			background:rgb(45, 45, 45);
+			position:absolute;
+			top:0px;
+			right:0px;
+			bottom:0px;
+			left:0px;
+		}
+		/* aaaaaa */
+		.box {
+			height: 99% !important;
+			width: 99%;
+			position: absolute;
+			overflow: hidden;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			display: flex;
+			flex-direction: column;
+			box-shadow: 0 14px 28px rgba(0,0,0,0.25),
+									0 10px 10px rgba(0,0,0,0.22);
+		}
+
+		.box-header {
+			padding: 10px 50px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: var(--box-header-bg);
+			color: var(--box-header-color);
+		}
+
+		.list {
+			position: relative;
+			padding: unset;
+			margin: 0;
+			width: 100%;	
+		}
+
+		.item {
+			list-style: none;
+			padding: 15px 40px;
+			box-shadow: 0 5px 25px rgba(0,0,0,.1);
+			position: relative;
+			background: var(--item-bg-color);
+			cursor: pointer;
+			transition: all 0.3s;
+		}
+
+		.itemSelected {
+			list-style: none;
+			padding: 15px 40px;
+			box-shadow: 0 5px 25px rgba(0,0,0,.1);
+			position: relative;
+			background: var(--main-bg-color);
+			cursor: pointer;
+			transition: all 0.3s;
+			color: white;
+		}
+
+		/* .item:hover {
+			transform: scale(1.1);
+			z-index: 100;
+			background: var(--item-hover-bg);
+			color: var(--item-hover-color);
+		} */
+	</style>
+</html>
