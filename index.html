@@ -9,7 +9,10 @@
 	</head>
 	<body>
 		<div id="app">
-				<video ref="videoPlayer" class="video-js" height="500px" width="500px"></video>
+				<div class="overlay">
+
+					<video ref="videoPlayer" style="z-index: 2;"></video>
+				</div>
 			
 				<div class="center" v-if="loginPage">
 					<img src="https://www.adobe.com/es/express/feature/image/media_16ad2258cac6171d66942b13b8cd4839f0b6be6f3.png?width=750&format=png&optimize=medium" alt="">
@@ -26,7 +29,7 @@
 					</div>
 				</div>
 
-				<div class="box" v-if="!loginPage && !video">
+				<div class="box" v-if="channelsPage">
 						<div class="box-header">
 							<p style="font-size: 30px;">
 								Lista de Canales
@@ -42,8 +45,6 @@
 							</li>
 						</ul>
 				</div>
-					
-
 		</div>
 	</body>
 	<script src="https://vjs.zencdn.net/7.20.2/video.min.js"></script>
@@ -55,7 +56,7 @@
 			device_code: '',
 			loading: false,
 			loginPage: true,
-			tvPage: false,
+			channelsPage: false,
 			button: true,
 			channels: [],
 			errors: [],
@@ -64,14 +65,18 @@
 			player: null,
 			videoOptions: {
 				autoplay: true,
-				controls: true,
-				preload: 'auto',
+				width: "100%",
+				height: "100%",
+				loadingSpinner: false,
+				errorDisplay: false,
 				sources: [{
-					src: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
+					src: 'http://10.250.250.2:80/stream/3/index.m3u8',
 					type: 'application/x-mpegURL'
 				}]
 			}
 		  },
+		//   https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+		// http://10.250.250.2:80/stream/3/index.m3u8
 		  methods: {
 			displayError(errors) {
 				setTimeout(() => this.loading = false, 1000)
@@ -107,6 +112,7 @@
 						this.displayError(result.data.message);
 						this.channels = result.data.channels
 						this.loginPage = false
+						this.channelsPage = true
 					}
 				});
 			},
@@ -130,9 +136,28 @@
 						console.log('bye')
 						tizen.application.getCurrentApplication().exit();
 						break;
+					case 10253:
+						this.displayMenuChannels();
+						break;
+					case 427:
+						this.selectorPosition('+')
+						this.startVideo()
+						break
+						//up
+					case 428:
+						this.selectorPosition('-')
+						this.startVideo()
+						break
 					default:
 						console.log('Key code : ' + e.keyCode);
 						break;
+				}
+			},
+			displayMenuChannels() {
+				if (this.channelsPage) {
+					this.channelsPage = false
+				} else {
+					this.channelsPage = true
 				}
 			},
 			selectorPosition(value) {
@@ -142,21 +167,24 @@
 				if (value == '+') {
 					if (this.selector < this.channels.length - 1) {
 						this.selector++;
-						element.scrollIntoView({block: "center", behavior: "auto"})
 					}
 				} else {
-
 					if (this.selector > 0) {
 						this.selector--;
-						element.scrollIntoView({block: "center", behavior: "auto"})
-
 					}
+				}
+				if(this.channelsPage) {
+					element.scrollIntoView({block: "center", behavior: "auto"})
 				}
 			},
 			startVideo() {
 				var url = this.channels[this.selector].url;
 				this.videoOptions.sources[0].src = url;
-				
+				console.log(url, 'a')
+				this.player.src({
+					src: url,
+					type: 'application/x-mpegURL'
+				});
 			}
 		  },
 		  mounted() {
@@ -191,19 +219,26 @@
 
 	</script>
 	<style>
-		#video {
-			width: 99%;
-			height: 99%;
-			z-index: 2;
+		.vjs-tech {
+			width: 100%;
+			height: 100%;
 			position: absolute;
 		}
+		.overlay {
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			left: 0;
+			top: 0;
+		}
+
 		:root {
 			--main-bg-color: #bcbcbc;
 			--item-hover-bg: #2f2d30;
 			--item-hover-color: rgb(225, 161, 161);
-			--item-bg-color: #fff;
-			--box-header-bg: #403d42;
-			--box-header-color: #fff;
+			--item-bg-color: transparent;
+			--box-header-bg: transparent;
+			--box-header-color: white;
 		}
 		.error {
 			color: red;
@@ -272,8 +307,9 @@
 		}
 		/* aaaaaa */
 		.box {
-			height: 99% !important;
-			width: 99%;
+			z-index: 3;
+			height: 100% !important;
+			width: 100%;
 			position: absolute;
 			overflow: hidden;
 			top: 50%;
@@ -319,6 +355,7 @@
 			background: var(--main-bg-color);
 			cursor: pointer;
 			transition: all 0.3s;
+			font-weight: bold;
 			color: white;
 		}
 
