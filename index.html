@@ -14,7 +14,7 @@
 				</div>
 				<div class="center" v-if="loginPage" >
 					<div style="box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px; padding: 40px; border-radius: 20px; background-color: white;">
-						<img src="./public/atenea.png" alt="" style="border-radius: 20px;">
+						<img src="./public/atenea.png" alt="" style="border-radius: 20px; width: fit-content;">
 					</div>
 					<br>
 					<br>
@@ -207,12 +207,11 @@
 					axios.post(url).then((result) => {
 						console.log(result.data.code)
 						localStorage.setItem("device_code", result.data.code);
-
+						this.device_code = result.data.code
 					});
 				}
 			},
 			mounted() {
-				// window.localStorage.clear();
 				if (localStorage.getItem("device_code") === null) {
 					this.device_code = 'No tienes codigo de activacion contacta un administrador'
 					this.generateCode()
