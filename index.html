@@ -2,25 +2,27 @@
 <html>
 	<head>
 		<title>laaaaa</title>
-	    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+		<link rel="stylesheet" type="text/css" href="css/style.css"/>
 		<link href="https://vjs.zencdn.net/7.20.2/video-js.css" rel="stylesheet" />
 		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-	    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 	</head>
-	<body>
+	<body style="background-color:#242424">
 		<div id="app">
-				<div class="overlay">
-
+				<div class="overlay" v-if="video">
 					<video ref="videoPlayer" style="z-index: 2;"></video>
 				</div>
-			
-				<div class="center" v-if="loginPage">
-					<img src="https://www.adobe.com/es/express/feature/image/media_16ad2258cac6171d66942b13b8cd4839f0b6be6f3.png?width=750&format=png&optimize=medium" alt="">
+				<div class="center" v-if="loginPage" >
+					<div style="box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px; padding: 40px; border-radius: 20px; background-color: white;">
+						<img src="./public/atenea.png" alt="" style="border-radius: 20px;">
+					</div>
+					<br>
+					<br>
 					<div class="contentCode">
 						<div class="code">
-							<div style="margin-bottom: 2px;">{{ device_code }}</div>
-							<button style="margin-bottom: 1px;" class="button" v-on:click="login" v-if="button">Validar</button>
-							
+							<div style="margin-bottom: 2px; color: white;">{{ device_code }}</div>
+							<button style="margin-bottom: 1px;" class="button" v-on:click="login" v-if="button" id="buttonClick">Validar</button>
+							<br>
 							<div v-for="error in errors" class="error">{{ error }}</div>
 
 							<div class="loader" v-if="loading"></div>
@@ -49,160 +51,176 @@
 	</body>
 	<script src="https://vjs.zencdn.net/7.20.2/video.min.js"></script>
 	<script type="module">
+		
 		new Vue({
-		  el: '#app',
-		  data: {
-		    video: true,
-			device_code: '',
-			loading: false,
-			loginPage: true,
-			channelsPage: false,
-			button: true,
-			channels: [],
-			errors: [],
-			selector: 0,
-			
-			player: null,
-			videoOptions: {
-				autoplay: true,
-				width: "100%",
-				height: "100%",
-				loadingSpinner: false,
-				errorDisplay: false,
-				sources: [{
-					src: 'http://10.250.250.2:80/stream/3/index.m3u8',
-					type: 'application/x-mpegURL'
-				}]
-			}
-		  },
+			el: '#app',
+			data: {
+				video: false,
+				device_code: '',
+				loading: false,
+				loginPage: true,
+				channelsPage: false,
+				button: true,
+				channels: [],
+				errors: [],
+				selector: 0,
+				
+				player: null,
+				videoOptions: {
+					autoplay: true,
+					width: "100%",
+					height: "100%",
+					loadingSpinner: false,
+					errorDisplay: false,
+					sources: [{
+						src: 'http://10.250.250.2:80/stream/3/index.m3u8',
+						type: 'application/x-mpegURL'
+					}]
+				}
+			},
 		//   https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
 		// http://10.250.250.2:80/stream/3/index.m3u8
-		  methods: {
-			displayError(errors) {
-				setTimeout(() => this.loading = false, 1000)
+			methods: {
+				displayError(errors) {
+					setTimeout(() => this.loading = false, 1000)
 
-				setTimeout(() => this.errors.push(errors), 1000)
+					setTimeout(() => this.errors.push(errors), 1000)
 
-				// this.errors.push(errors);
-				setTimeout(() => this.errors = [], 4000)
-				setTimeout(() => this.button = true, 4000)
+					// this.errors.push(errors);
+					setTimeout(() => this.errors = [], 4000)
+					setTimeout(() => this.button = true, 4000)
 
-				return
-			},
-			login() {
-				this.errors = [];
-            	this.loading = true
-				this.button = false
-				var url = 'https://badala.ataria.co/ISP/IPTV/api.asp?'
-	
-				const params = new URLSearchParams({
-					action: 'login',
-					device_code: this.device_code,
-					mac: 'xd',
-					loading: false
-				}).toString();
+					return
+				},
+				login() {
+					this.errors = [];
+					this.loading = true
+					this.button = false
+					var url = 'https://badala.ataria.co/ISP/IPTV/api.asp?'
+		
+					const params = new URLSearchParams({
+						action: 'login',
+						device_code: this.device_code,
+						mac: 'xd',
+						loading: false
+					}).toString();
 
-				url = url + params
-				axios.post(url).then((result) => {
-					console.log(result.data)
-					if (result.data.session == null) {
-						
-						this.displayError(result.data.message);
+					url = url + params
+					axios.post(url).then((result) => {
+						console.log(result.data)
+						if (result.data.session == null) {
+							
+							this.displayError(result.data.message);
+						} else {
+							this.displayError(result.data.message);
+							this.channels = result.data.channels
+							this.loginPage = false
+							this.channelsPage = true
+							this.video = true
+							this.player = videojs(this.$refs.videoPlayer, this.videoOptions, () => {
+								this.player.log('onPlayerReady', this);
+							});
+						}
+					});
+				},
+				keyDownHandler(e) {
+					console.log(e.keyCode)
+					switch(e.keyCode){
+						case 37: //LEFT arrow
+							break;
+						case 38: //UP arrow
+							this.selectorPosition('-')
+							break;
+						case 39: //RIGHT arrow
+							break;
+						case 40: //DOWN arrow
+							this.selectorPosition('+')
+							break;
+						case 13: //OK button
+							if (!this.video && this.button) {
+								document.getElementById('buttonClick').click();
+							}
+							this.startVideo()
+							break;
+						case 10009:
+							console.log('bye')
+							tizen.application.getCurrentApplication().exit();
+							break;
+						case 10253:
+							this.displayMenuChannels();
+							break;
+						case 427:
+							this.selectorPosition('+')
+							this.startVideo()
+							break
+							//up
+						case 428:
+							this.selectorPosition('-')
+							this.startVideo()
+							break
+						default:
+							console.log('Key code : ' + e.keyCode);
+							break;
+					}
+				},
+				displayMenuChannels() {
+					if (this.channelsPage) {
+						this.channelsPage = false
 					} else {
-						this.displayError(result.data.message);
-						this.channels = result.data.channels
-						this.loginPage = false
 						this.channelsPage = true
 					}
-				});
-			},
-			keyDownHandler(e) {
-				console.log(e.keyCode)
-				switch(e.keyCode){
-					case 37: //LEFT arrow
-						break;
-					case 38: //UP arrow
-						this.selectorPosition('-')
-						break;
-					case 39: //RIGHT arrow
-						break;
-					case 40: //DOWN arrow
-						this.selectorPosition('+')
-						break;
-					case 13: //OK button
-						this.startVideo()
-						break;
-					case 10009:
-						console.log('bye')
-						tizen.application.getCurrentApplication().exit();
-						break;
-					case 10253:
-						this.displayMenuChannels();
-						break;
-					case 427:
-						this.selectorPosition('+')
-						this.startVideo()
-						break
-						//up
-					case 428:
-						this.selectorPosition('-')
-						this.startVideo()
-						break
-					default:
-						console.log('Key code : ' + e.keyCode);
-						break;
-				}
-			},
-			displayMenuChannels() {
-				if (this.channelsPage) {
-					this.channelsPage = false
-				} else {
-					this.channelsPage = true
-				}
-			},
-			selectorPosition(value) {
-				var lista = 'lista'+this.selector
+				},
+				selectorPosition(value) {
+					var lista = 'lista'+this.selector
 
-				var element = document.getElementById(lista);
-				if (value == '+') {
-					if (this.selector < this.channels.length - 1) {
-						this.selector++;
+					var element = document.getElementById(lista);
+					if (value == '+') {
+						if (this.selector < this.channels.length - 1) {
+							this.selector++;
+						}
+					} else {
+						if (this.selector > 0) {
+							this.selector--;
+						}
 					}
-				} else {
-					if (this.selector > 0) {
-						this.selector--;
+					if(this.channelsPage) {
+						element.scrollIntoView({block: "center", behavior: "auto"})
 					}
-				}
-				if(this.channelsPage) {
-					element.scrollIntoView({block: "center", behavior: "auto"})
+				},
+				startVideo() {
+					var url = this.channels[this.selector].url;
+					this.videoOptions.sources[0].src = url;
+					console.log(url, 'a')
+					this.player.src({
+						src: url,
+						type: 'application/x-mpegURL'
+					});
+				},
+				generateCode() {
+					var url = 'https://badala.ataria.co/ISP/IPTV/api.asp?'
+					const params = new URLSearchParams({
+						action: 'GETCODE',
+						technology: 'Samsung',
+					}).toString();
+
+					url = url + params
+					axios.post(url).then((result) => {
+						console.log(result.data.code)
+						localStorage.setItem("device_code", result.data.code);
+
+					});
 				}
 			},
-			startVideo() {
-				var url = this.channels[this.selector].url;
-				this.videoOptions.sources[0].src = url;
-				console.log(url, 'a')
-				this.player.src({
-					src: url,
-					type: 'application/x-mpegURL'
-				});
-			}
-		  },
-		  mounted() {
-			this.player = videojs(this.$refs.videoPlayer, this.videoOptions, () => {
-				this.player.log('onPlayerReady', this);
-			});
-			// window.localStorage.clear();
-			localStorage.setItem("device_code", '229BC193');
-			if (localStorage.getItem("device_code") === null) {
-				this.device_code = 'No tienes codigo de activacion contacta un administrador'
-				//generar codigo
-			} else {
-				var code = window.localStorage.getItem('device_code');
-				this.device_code = code
-				this.login()
-			}
-
-			
+			mounted() {
+				// window.localStorage.clear();
+				if (localStorage.getItem("device_code") === null) {
+					this.device_code = 'No tienes codigo de activacion contacta un administrador'
+					this.generateCode()
+				} else {
+					var code = window.localStorage.getItem('device_code');
+					this.device_code = code
+					this.login()
+				}
 			},
 			created() {
 				var value = tizen.tvinputdevice.getSupportedKeys();
@@ -215,7 +233,7 @@
 				this.player.dispose();
 				}
 			}
- 		})
+		})
 
 	</script>
 	<style>
@@ -241,12 +259,12 @@
 			--box-header-color: white;
 		}
 		.error {
-			color: red;
+			color: rgb(173, 87, 87);
 			font-size: larger;
 		}
 		.loader {
 			border: 5px solid #f3f3f3; /* Light grey */
-			border-top: 5px solid red; /* Blue */
+			border-top: 5px solid rgb(173, 87, 87); /* Blue */
 			border-radius: 50%;
 			width: 20px;
 			height: 20px;
@@ -261,19 +279,19 @@
 			padding: 8px 20px;
 			background-color: cadetblue;
 			font-size: 24px;
-  			text-align: center;
+			text-align: center;
 			cursor: pointer;
 			outline: none;
 			color: #fff;
-			background-color: #04AA6D;
+			background-color: rgb(173, 87, 87);
 			border: none;
 			border-radius: 10px;
 			box-shadow: 0 5px #999;
 		}
-		.button:hover {background-color: #3e8e41}
+		.button:hover {background-color: rgb(188, 61, 61)}
 
 		.button:active {
-		background-color: #3e8e41;
+		background-color: rgb(173, 87, 87);
 		box-shadow: 0 5px #666;
 		transform: translateY(4px);
 		}
@@ -305,7 +323,6 @@
 			bottom:0px;
 			left:0px;
 		}
-		/* aaaaaa */
 		.box {
 			z-index: 3;
 			height: 100% !important;
