@@ -9,12 +9,12 @@
 	</head>
 	<body style="background-color:#242424">
 		<div id="app">
-				<div class="overlay" v-if="video">
-					<video ref="videoPlayer" style="z-index: 2;"></video>
+				<div class="overlay">
+					<video ref="videoPlayer" style="z-index: 2;" v-if="video"></video>
 				</div>
 				<div class="center" v-if="loginPage" >
 					<div style="box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px; padding: 40px; border-radius: 20px; background-color: white;">
-						<img src="./public/atenea.png" alt="" style="border-radius: 20px; width: 100%;">
+						<img src="./public/atenea.png" alt="" style="border-radius: 20px; width: fit-content;">
 					</div>
 					<br>
 					<br>
@@ -55,7 +55,7 @@
 		new Vue({
 			el: '#app',
 			data: {
-				video: false,
+				video: true,
 				device_code: '',
 				loading: false,
 				loginPage: true,
@@ -116,7 +116,6 @@
 							this.channels = result.data.channels
 							this.loginPage = false
 							this.channelsPage = true
-							this.video = true
 							this.player = videojs(this.$refs.videoPlayer, this.videoOptions, () => {
 								this.player.log('onPlayerReady', this);
 							});
@@ -137,7 +136,10 @@
 							this.selectorPosition('+')
 							break;
 						case 13: //OK button
-							if (!this.video && this.button) {
+							if (this.channelsPage == false && this.loginPage == false) {
+								break
+							}
+							if (this.button && this.loginPage) {
 								document.getElementById('buttonClick').click();
 							}
 							this.startVideo()
@@ -146,17 +148,25 @@
 							console.log('bye')
 							tizen.application.getCurrentApplication().exit();
 							break;
+						case 403:
 						case 10253:
+							
 							this.displayMenuChannels();
 							break;
 						case 427:
-							this.selectorPosition('+')
-							this.startVideo()
+							if (this.selector > 0) {
+
+								this.selectorPosition('-')
+								this.startVideo()
+							}
 							break
 							//up
 						case 428:
-							this.selectorPosition('-')
-							this.startVideo()
+							if (this.selector < this.channels.length) {
+
+								this.selectorPosition('+')
+								this.startVideo()
+							}
 							break
 						default:
 							console.log('Key code : ' + e.keyCode);
@@ -171,6 +181,9 @@
 					}
 				},
 				selectorPosition(value) {
+					if (this.channelsPage == false) {
+						return
+					}
 					var lista = 'lista'+this.selector
 
 					var element = document.getElementById(lista);
@@ -178,14 +191,13 @@
 						if (this.selector < this.channels.length - 1) {
 							this.selector++;
 						}
+						
 					} else {
 						if (this.selector > 0) {
 							this.selector--;
 						}
 					}
-					if(this.channelsPage) {
-						element.scrollIntoView({block: "center", behavior: "auto"})
-					}
+					element.scrollIntoView({block: "center", behavior: "auto"})
 				},
 				startVideo() {
 					var url = this.channels[this.selector].url;
@@ -212,6 +224,7 @@
 				}
 			},
 			mounted() {
+
 				if (localStorage.getItem("device_code") === null) {
 					this.device_code = 'No tienes codigo de activacion contacta un administrador'
 					this.generateCode()
@@ -219,17 +232,24 @@
 					var code = window.localStorage.getItem('device_code');
 					this.device_code = code
 					this.login()
+					
 				}
 			},
 			created() {
 				var value = tizen.tvinputdevice.getSupportedKeys();
 				console.log(value); 
+				tizen.tvinputdevice.registerKey('Extra');
+				tizen.tvinputdevice.registerKey('ChannelDown');
+				tizen.tvinputdevice.registerKey('ChannelUp');
+				tizen.tvinputdevice.registerKey('ColorF0Red');
+
+				console.log('test')
 				window.addEventListener('keydown', this.keyDownHandler);
 
 			},
 			beforeDestroy() {
 				if (this.player) {
-				this.player.dispose();
+					this.player.dispose();
 				}
 			}
 		})

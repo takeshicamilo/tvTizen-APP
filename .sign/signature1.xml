@@ -2,6 +2,11 @@
 <SignedInfo>
 <CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"></CanonicalizationMethod>
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha512"></SignatureMethod>
+<Reference URI=".DS_Store">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"></DigestMethod>
+<DigestValue>EnfErX5A4Hbfkvq/4svZCvhlomJJwIJchumcWvQZKnedLkOSoXGEC+5dHjnSQngvvwceXb5m1zOC
+cBobz/wdwA==</DigestValue>
+</Reference>
 <Reference URI=".metadata%2F.lock">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"></DigestMethod>
 <DigestValue>z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGl
@@ -139,13 +144,13 @@ EFnj73UkuQ==</DigestValue>
 </Reference>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"></DigestMethod>
-<DigestValue>OJv6cagf/rl8qXvbpPxc/UWBpooxppdAO2XZqvztUHQj1QdtUxnrVT5u06F3HK1SFIZB2TKiXIRm
-Opuv5Ricrg==</DigestValue>
+<DigestValue>CCdgaMN7iEIO4/GZGfabaeL22i1Bgdk+nydMRkt5myvl6dPqzRD7pUSI50eUNDNqYJ/Hde86/44I
+Z28o8znuWg==</DigestValue>
 </Reference>
 <Reference URI="config.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"></DigestMethod>
-<DigestValue>2aimjzblKUTcFJBW1J6gnjnTgkMpGtkr+YWcUcDEabX05BxHKjiMjRqoxKxTMJsgQDeJglP+fmlK
-uwD+CHgISg==</DigestValue>
+<DigestValue>95cK37g85Fgfx0URbahxBxrL5DAbpD2AdHC4totwPUA6Qzl27X2Dw+4JAgY8Ahskft5vszETKybF
+zo5eg8266g==</DigestValue>
 </Reference>
 <Reference URI="css%2Fstyle.css">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"></DigestMethod>
@@ -154,13 +159,23 @@ uwD+CHgISg==</DigestValue>
 </Reference>
 <Reference URI="icon.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"></DigestMethod>
-<DigestValue>BTGBG483ma/3HgWnreWF2xbdzr4F0gTRWjwxoSV+7kKBWt4UJTuv5WE4DhKdU4in2kwn/55O/qPD
-bNc/wgCuGg==</DigestValue>
+<DigestValue>WWb3sGM3IUwglSLiNqdd2tfvVV5uvxjKDyNWIsg3h5CEu6//xWGw/CE0JxEIZif8BiDEpnX+5SBd
+r2k1RlBkTQ==</DigestValue>
+</Reference>
+<Reference URI="images%2Ftizen_32.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"></DigestMethod>
+<DigestValue>7f1YiHBQcYjx42nqKzb4/Wz8pc8TtcA+Qj5X50iM8bfGp4Dm9VHa0pNhEIYXFYjH+WDhKPIoFYNG
+FD4iefxLsg==</DigestValue>
 </Reference>
 <Reference URI="index.html">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"></DigestMethod>
-<DigestValue>AzvREBk8C0AAcAeqopDjxk14Wc7KcMbKIG+92sDmaq+oHwuYDBUL+fEpl2XvcGckRSVtIIVPYfuY
-iXBWQQfUKQ==</DigestValue>
+<DigestValue>OjCvXLTtEhzUm0NNoPa7ufW7XB59AgDSJ8i2f2O4Y3NWwAYbKeWY5+JS7EoHAl0loMpZSB1A4eaw
+HTlEXU8+Wg==</DigestValue>
+</Reference>
+<Reference URI="js%2Fmain.js">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"></DigestMethod>
+<DigestValue>NRq74AGhCVcqZCmu3BwkIFCc5FAX2ZWpEIKXKLUe1OL9g2ByGlW/lnCTAUD5rNE9Kp7+sz/YTZHd
+Iyu7EIHf9g==</DigestValue>
 </Reference>
 <Reference URI="main.js">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"></DigestMethod>
@@ -177,10 +192,10 @@ jV0znsOoMA==</DigestValue>
 <DigestValue>wOEzmeoqwNFaI6fE7Ym7hXxSVzOjaTb2QrRyHfMieprgCbZOknA/zaeXUO9XVXz9xGg4n2iduzCL
 O8erbqSitA==</DigestValue>
 </Reference>
-<Reference URI="tvAPP.wgt">
+<Reference URI="public%2Fatenea.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"></DigestMethod>
-<DigestValue>vpbpav8feWIBXmZ1JrJ2pCnLzMg5OihvszE60DQjMCKWgxqygrqKNJWRm8Savz+K6l2kfHTMxHzS
-nX9zsj7JzA==</DigestValue>
+<DigestValue>WWb3sGM3IUwglSLiNqdd2tfvVV5uvxjKDyNWIsg3h5CEu6//xWGw/CE0JxEIZif8BiDEpnX+5SBd
+r2k1RlBkTQ==</DigestValue>
 </Reference>
 <Reference URI="#prop">
 <Transforms>
@@ -192,9 +207,9 @@ GyvKX9Snig==</DigestValue>
 </Reference>
 </SignedInfo>
 <SignatureValue>
-VIX6whaZM2ePejAdHMFKjWU0Ys+JXZCsba77wKQG3Uyr7z8sZPFl0o/pL+lQ4ol+vgSdxir5xNU7
-cER4KD/z6jZmc/WyXVWvR3ccGtBLnqD1Pbkkukv1+YCMRSw4AZLqJH1IKdftVZNONkisGncVFu1i
-CBpCrEB7qcWbOrPP9dI=
+JxSkgLQd5o0hKbz46napGpOdk/48IaJcQjoxOEncoL5DF0P3YwYVslhABUrBSMcwPl3PslfCVwzf
+jCOxKOMQovBIRwjW1ef/o5nho7NPId+G4/V4OvRNdnphJ1o4q4DqBEKGP8wSH12UCPxmVbju/zlz
+WUN1iPXWfqKw5VfICnU=
 </SignatureValue>
 <KeyInfo>
 <X509Data>
