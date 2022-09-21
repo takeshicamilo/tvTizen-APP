@@ -64,6 +64,7 @@
 				channels: [],
 				errors: [],
 				selector: 0,
+				currentSelector: 0,
 				
 				player: null,
 				videoOptions: {
@@ -128,12 +129,12 @@
 						case 37: //LEFT arrow
 							break;
 						case 38: //UP arrow
-							this.selectorPosition('-')
+							this.channelsPage == true ? this.selectorPosition('-') : null
 							break;
 						case 39: //RIGHT arrow
 							break;
 						case 40: //DOWN arrow
-							this.selectorPosition('+')
+							this.channelsPage == true ? this.selectorPosition('+') : null
 							break;
 						case 13: //OK button
 							if (this.channelsPage == false && this.loginPage == false) {
@@ -141,6 +142,9 @@
 							}
 							if (this.button && this.loginPage) {
 								document.getElementById('buttonClick').click();
+							}
+							if (this.selector == this.currentSelector) {
+								break
 							}
 							this.startVideo()
 							break;
@@ -176,14 +180,15 @@
 				displayMenuChannels() {
 					if (this.channelsPage) {
 						this.channelsPage = false
+						var lista = 'lista'+this.selector
+						var element = document.getElementById(lista);
+						element.scrollIntoView({block: "center", behavior: "auto"})
 					} else {
 						this.channelsPage = true
 					}
 				},
 				selectorPosition(value) {
-					if (this.channelsPage == false) {
-						return
-					}
+
 					var lista = 'lista'+this.selector
 
 					var element = document.getElementById(lista);
@@ -197,9 +202,12 @@
 							this.selector--;
 						}
 					}
-					element.scrollIntoView({block: "center", behavior: "auto"})
+					if (this.channelsPage == true) {
+						element.scrollIntoView({block: "center", behavior: "auto"})
+					}
 				},
 				startVideo() {
+					this.currentSelector = this.selector;
 					var url = this.channels[this.selector].url;
 					this.videoOptions.sources[0].src = url;
 					console.log(url, 'a')
@@ -224,13 +232,14 @@
 				}
 			},
 			mounted() {
-
+				localStorage.setItem("device_code", 'E95C0C88');
 				if (localStorage.getItem("device_code") === null) {
 					this.device_code = 'No tienes codigo de activacion contacta un administrador'
 					this.generateCode()
 				} else {
 					var code = window.localStorage.getItem('device_code');
 					this.device_code = code
+					console.log(this.device_code);
 					this.login()
 					
 				}
