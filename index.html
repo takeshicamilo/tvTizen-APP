@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>laaaaa</title>
+		<title>AteneaTV</title>
 		<link rel="stylesheet" type="text/css" href="css/style.css"/>
 		<link href="https://vjs.zencdn.net/7.20.2/video-js.css" rel="stylesheet" />
 		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -18,23 +18,33 @@
 					</div>
 					<br>
 					<br>
-					<div class="contentCode">
-						<div class="code">
+					<div class="contentCode" v-if="internetChecker">
+						<div class="code" >
 							<div style="margin-bottom: 2px; color: white;">{{ device_code }}</div>
-							<button style="margin-bottom: 1px;" class="button" v-on:click="login" v-if="button" id="buttonClick">Validar</button>
+							<button style="margin-bottom: 1px;" class="button" v-on:click="login" v-if="button" id="buttonClick">Login</button>
 							<br>
 							<div v-for="error in errors" class="error">{{ error }}</div>
 
 							<div class="loader" v-if="loading"></div>
 						</div>
-
 					</div>
+					<div class="contentCode" v-if="internetChecker">
+						<div class="code" >
+							<div style="margin-bottom: 2px; color: white;">{{ device_code }}</div>
+							<button style="margin-bottom: 1px;" class="button" v-on:click="login" v-if="button" id="buttonClick">Problemas de conexion</button>
+							<br>
+							<div v-for="error in errors" class="error">Reinicia la aplicacion</div>
+
+							<div class="loader" v-if="loading"></div>
+						</div>
+					</div>
+					
 				</div>
 
 				<div class="box" v-if="channelsPage">
 						<div class="box-header">
 							<p style="font-size: 30px;">
-								Lista de Canales
+								Channel List
 							</p>
 						</div>
 						<ul class="list">
@@ -51,7 +61,6 @@
 	</body>
 	<script src="https://vjs.zencdn.net/7.20.2/video.min.js"></script>
 	<script type="module">
-		
 		new Vue({
 			el: '#app',
 			data: {
@@ -60,6 +69,7 @@
 				loading: false,
 				loginPage: true,
 				channelsPage: false,
+				internetChecker:false,
 				button: true,
 				channels: [],
 				errors: [],
@@ -147,10 +157,13 @@
 								break
 							}
 							this.startVideo()
+
+							setTimeout(()=> {
+								this.displayMenuChannels()
+							}, 500)
 							break;
 						case 10009:
-							console.log('bye')
-							tizen.application.getCurrentApplication().exit();
+							this.displayMenuChannels();
 							break;
 						case 403:
 						case 10253:
@@ -232,16 +245,22 @@
 				}
 			},
 			mounted() {
-				localStorage.setItem("device_code", 'E95C0C88');
-				if (localStorage.getItem("device_code") === null) {
-					this.device_code = 'No tienes codigo de activacion contacta un administrador'
-					this.generateCode()
+
+				if (navigator.onLine) {
+  					// your code that relies on an internet connection goes here
+					localStorage.setItem("device_code", 'E95C0C88');
+					if (localStorage.getItem("device_code") === null) {
+						this.device_code = 'No tienes codigo de activacion contacta un administrador'
+						this.generateCode()
+					} else {
+						var code = window.localStorage.getItem('device_code');
+						this.device_code = code
+						console.log(this.device_code);
+						this.login()
+						
+					}
 				} else {
-					var code = window.localStorage.getItem('device_code');
-					this.device_code = code
-					console.log(this.device_code);
-					this.login()
-					
+					alert("You're offline! Please connect to the internet to continue.");
 				}
 			},
 			created() {
