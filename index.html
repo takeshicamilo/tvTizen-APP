@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>laaaaa</title>
+		<title>AteneaTV</title>
 		<link rel="stylesheet" type="text/css" href="css/style.css"/>
 		<link href="https://vjs.zencdn.net/7.20.2/video-js.css" rel="stylesheet" />
 		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -21,7 +21,7 @@
 					<div class="contentCode">
 						<div class="code">
 							<div style="margin-bottom: 2px; color: white;">{{ device_code }}</div>
-							<button style="margin-bottom: 1px;" class="button" v-on:click="login" v-if="button" id="buttonClick">Validar</button>
+							<button style="margin-bottom: 1px;" class="button" v-on:click="login" v-if="button" id="buttonClick">Login</button>
 							<br>
 							<div v-for="error in errors" class="error">{{ error }}</div>
 
@@ -34,7 +34,7 @@
 				<div class="box" v-if="channelsPage">
 						<div class="box-header">
 							<p style="font-size: 30px;">
-								Lista de Canales
+								Channel List
 							</p>
 						</div>
 						<ul class="list">
@@ -147,6 +147,10 @@
 								break
 							}
 							this.startVideo()
+
+							setTimeout(()=> {
+								this.displayMenuChannels()
+							}, 500)
 							break;
 						case 10009:
 							console.log('bye')
